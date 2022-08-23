@@ -28,18 +28,7 @@ jobs:
         run: |
           rm -rf rgbds
 
-      - name: Compare
-        if: ${{ github.repository_owner == 'pret' }}
-        run: |
-          make DEBUG=1 -j$(nproc) compare
-          if ! git diff-index --quiet HEAD --; then
-            echo 'Uncommitted changes detected:'
-            git diff-index HEAD --
-            return 1
-          fi
-
       - name: Make
-        if: ${{ github.repository_owner != 'pret' }}
         run: |
           make -j$(nproc)
           if ! git diff-index --quiet HEAD --; then
@@ -47,7 +36,16 @@ jobs:
             git diff-index HEAD --
             return 1
           fi
-
+      - name: Silver ROM Upload      
+        uses: actions/upload-artifact@v3
+              with:
+                name: "Pokemon Silver"
+                path: "pokesilver.gbc"      
+      - name: Gold ROM Upload      
+        uses: actions/upload-artifact@v3
+              with:
+                name: "Pokemon Gold"
+                path: "pokegold.gbc"
       - name: Checkout symbols
         if: ${{ github.event_name == 'push' && github.repository_owner == 'pret' }}
         uses: actions/checkout@master
